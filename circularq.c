@@ -76,19 +76,23 @@ void search(int value)
 }
 
 
-void display() 
+void display()
 {
-if (front==-1)
-{
-printf("Queue is empty.\n");
-return;
-}
-printf("Queue elements are: ");
-for (int i=front;i<=rear;i++)
-{
-printf("%d ", queue[i]);
-}
-printf("\n");
+    if (front == -1)
+    {
+        printf("Queue is empty.\n");
+        return;
+    }
+    printf("Queue elements are: ");
+    int i=front;
+    while(1)
+    {
+        printf("%d ", queue[i]);
+        if (i == rear)
+            break;
+        i = (i+1) % MAX;
+    }
+    printf("\n");
 }
 
 void main()
@@ -96,7 +100,7 @@ void main()
     int ch,value;
     while(1)
     {
-        printf("1.Enqueue 2.Dequeue 3.Search\n");
+        printf("1.Enqueue 2.Dequeue 3.Search 4.Display\n");
         printf("Enter your choice: ");
         scanf("%d",&ch);
         switch(ch)
@@ -115,6 +119,9 @@ void main()
             search(value);
             break;
             case 4:
+            display();
+            break;
+            case 5:
             exit(1);
             default:
             printf("Invalid opertaion");
