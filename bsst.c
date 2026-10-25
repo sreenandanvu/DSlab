@@ -1,84 +1,91 @@
-#include<stdio.h>
-#include<stdlib.h>
 
-struct Node{
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
     int data;
-    struct node *right;
-    struct node *left;
+    struct Node *left;
+    struct Node *right;
 };
 
-struct Node* createNode(int value){
-    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
-    if(newNode==NULL)
-    {
-     printf("Meory allocation failed\n");
-     exit(1);
+struct Node* createNode(int value) {
+    struct Node *newNode = malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
     }
-    newNode->data=value;
-    newNode->left=NULL;
-    newNode->right=NULL;
+
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+
     return newNode;
 }
-sturct Node* insert(struct Node *root,int value){
-    if(root==NULL)
-    return createNode(value);
 
-    if(value<root->data)
-    root->left=insert(root->left,value);
-    else if(value>root->data)
-    root->right=insert(root->right,value);
+struct Node* insert(struct Node *root, int value) {
+    if (root == NULL)
+        return createNode(value);
+
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
 
     return root;
 }
 
-struct Node* search(struct Node *root,int key)
-{
-    if(root==NULL || root->data==key)
+struct Node* search(struct Node *root, int key) {
+    if (root == NULL || root->data == key)
+        return root;
+
+    if (key < root->data)
+        return search(root->left, key);
+
+    return search(root->right, key);
+}
+
+struct Node* findmin(struct Node *root) {
+    while (root != NULL && root->left != NULL)
+        root = root->left;
+
     return root;
-    if(key < root->data)
-    return search(root->left,key);
-    return search(root->right,key);
 }
 
-struct Node* findmin(struct Node *root)
-{
-  while(root !=NULL && root->left !=NULL)
-  root=root->left;
-  return root;
-}
+struct Node* deleteNode(struct Node *root, int key) {
+    if (root == NULL)
+        return NULL;
 
-
-struct Node* deleteNode(struct Node *root,int key)
-{
-    if(root==NULL)
-    return NULL;
-    if(key<root->data)
-    [
-        root->left=deleteNode(root->left,key);
-    ]
-    else if(key>root->data)
-    {
-        root->right=deleteNode(root->right,key);
+    if (key < root->data) {
+        root->left = deleteNode(root->left, key);
     }
-    else
-    {
-        If(root->left==NULL)
-        {
-            struct Node *temp=root->right;
+    else if (key > root->data) {
+        root->right = deleteNode(root->right, key);
+    }
+    else {
+        // Case 1: No left child
+        if (root->left == NULL) {
+            struct Node *temp = root->right;
             free(root);
             return temp;
         }
-        if(root->right==NULL)
-        {
-            struct Node *temp=root->left;
+
+        // Case 2: No right child
+        if (root->right == NULL) {
+            struct Node *temp = root->left;
             free(root);
             return temp;
         }
-        struct Node *temp= findMin(root->right);
-        root->data=temp->data;
-        root->right=deleteNode(root->right,temp->data);
+
+        // Case 3: Two children
+        struct Node *temp = findmin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
     }
+
     return root;
+}
+
 void inorder(struct Node *root) {
     if (root != NULL) {
         inorder(root->left);
@@ -86,6 +93,7 @@ void inorder(struct Node *root) {
         inorder(root->right);
     }
 }
+
 void freeTree(struct Node *root) {
     if (root != NULL) {
         freeTree(root->left);
@@ -115,6 +123,7 @@ int main(void) {
                 printf("Enter value to insert: ");
                 if (scanf("%d", &value) != 1)
                     goto cleanup;
+
                 root = insert(root, value);
                 printf("Node inserted.\n");
                 break;
@@ -160,5 +169,4 @@ int main(void) {
 cleanup:
     freeTree(root);
     return 0;
-}
 }
